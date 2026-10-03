@@ -1,0 +1,50 @@
+MYSQL PASSWORD SETUP GUIDE
+==========================
+
+Your app is failing to connect to MySQL because the password doesn't match.
+
+ERROR: Access denied for user 'root'@'localhost' (using password: NO)
+
+This means either:
+1. MySQL root user HAS a password, but app.py shows: app.config['MYSQL_PASSWORD'] = ''
+2. OR MySQL is not running
+
+SOLUTION OPTIONS:
+================
+
+OPTION 1: Provide your MySQL root password
+-------------------------------------------
+Edit app.py and change this line:
+    app.config['MYSQL_PASSWORD'] = ''
+To:
+    app.config['MYSQL_PASSWORD'] = 'YOUR_PASSWORD_HERE'
+
+Example if your password is "mypassword123":
+    app.config['MYSQL_PASSWORD'] = 'mypassword123'
+
+OPTION 2: Reset MySQL root password to empty (no password)
+-----------------------------------------------------------
+Run these commands in MySQL command line:
+    mysql -u root -p
+    ALTER USER 'root'@'localhost' IDENTIFIED BY '';
+    FLUSH PRIVILEGES;
+
+OPTION 3: Check MySQL Service Status
+-------------------------------------
+Run in PowerShell as Administrator:
+    Get-Service MySQL* | Format-Table Name, Status
+
+If it shows "Stopped", start it with:
+    Start-Service -Name "MySQL80"  (or whatever version you have)
+
+OPTION 4: Use a different database user
+----------------------------------------
+If you have another MySQL user that works, update app.py:
+    app.config['MYSQL_USER'] = 'your_username'
+    app.config['MYSQL_PASSWORD'] = 'your_password'
+
+NEXT STEPS:
+===========
+1. Choose one of the options above
+2. Once configured, run: python app.py
+3. Visit http://127.0.0.1:5000 in your browser

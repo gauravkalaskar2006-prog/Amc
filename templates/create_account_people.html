@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Registration - AMC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .register-container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+
+    .register-container h2 {
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+
+    .register-container p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: #1d4ed8;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+      text-decoration: none;
+    }
+
+    .back-link a {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    .error-text {
+      color: red;
+      font-size: 12px;
+      display: none;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="register-container">
+    <h2>Create Account</h2>
+    <p>Register to access AMC Citizen Services</p>
+
+    <form method="POST" action="/citizen-register">
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="regName" required placeholder="Enter full name">
+      </div>
+
+      <div class="input-group">
+        <label>Mobile Number</label>
+        <input type="tel" id="regMobile" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
+        <div class="error-text" id="mobileError">Invalid Mobile Number</div>
+      </div>
+
+      <div class="input-group">
+        <label>Set Password</label>
+        <input type="password" id="regPass" required placeholder="Minimum 6 characters">
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input type="password" id="regConfirmPass" required placeholder="Re-enter password">
+        <div class="error-text" id="passError">Passwords do not match</div>
+      </div>
+
+      <button type="submit" class="btn-submit">Register</button>
+    </form>
+
+    <!-- THIS IS THE FIX FOR YOUR "CANNOT GET" ERROR -->
+    <div class="back-link">
+      Already have an account? <a href="/">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    function handleRegister(event) {
+      event.preventDefault(); // Stop page refresh
+
+      const name = document.getElementById('regName').value;
+      const mobile = document.getElementById('regMobile').value;
+      const pass = document.getElementById('regPass').value;
+      const confirmPass = document.getElementById('regConfirmPass').value;
+
+      // 1. Validation
+      if (mobile.length !== 10) {
+        document.getElementById('mobileError').style.display = 'block';
+        return;
+      } else {
+        document.getElementById('mobileError').style.display = 'none';
+      }
+
+      if (pass !== confirmPass) {
+        document.getElementById('passError').style.display = 'block';
+        return;
+      } else {
+        document.getElementById('passError').style.display = 'none';
+      }
+
+      if (pass.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return;
+      }
+
+      // 2. Simulate Saving Data (Local Storage)
+      // In a real app, this sends data to a server database
+      const user = { name: name, mobile: mobile, password: pass };
+
+      // Get existing users or empty array
+      let users = JSON.parse(localStorage.getItem('amc_citizens')) || [];
+
+      // Check if mobile already exists
+      if (users.find(u => u.mobile === mobile)) {
+        alert("This mobile number is already registered!");
+        return;
+      }
+
+      users.push(user);
+      localStorage.setItem('amc_citizens', JSON.stringify(users));
+
+      // 3. Success Message & Redirect
+      alert("Account created successfully! \n\nPlease login with your Mobile Number and Password.");
+
+      // Redirect back to the MAIN LOGIN PAGE
+      window.location.href = "/";
+    }
+  </script>
+
+</body>
+
+</html>
